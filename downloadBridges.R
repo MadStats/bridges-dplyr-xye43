@@ -2,6 +2,8 @@ install.packages("ggplot2")
 install.packages("plyr")
 install.packages("choroplethr")
 install.packages("dplyr")
+install.packages("readr")
+install.packages("choroplethrMaps")
 
 library(plyr)
 library(choroplethr)
@@ -24,7 +26,7 @@ dest = "https://www.fhwa.dot.gov/bridge/nbi/2016/delimited/AK16.txt"
 tmp = fread(dest) 
 tmp = as.tbl(tmp)
 tmp1 = read_csv(dest)
-tmp2 = read_csv(dest, col_types = "character")  # could make them all characters...
+tmp2 = read_csv(dest, col_types = "c")  # could make them all characters...
 classes = sapply(tmp, class)
 
 
@@ -162,6 +164,8 @@ table(wi$cond)
 table(wi$rate)
 wi = filter(wi, cond>1)
 ggplot(data = wi, mapping = aes(y = log(ADT_029), x =YEAR_BUILT_027, col = rate)) +geom_point() + geom_smooth()
+
+wi %>% group_by(YEAR_BUILT_027) %>% summarize(prop = mean(rate == "good")) %>% ggplot(mapping  = aes(x = YEAR_BUILT_027,y = prop)) + geom_point()
 
 map = ggplot(data = wi, mapping = aes(y = lat, x = lon))
 map + geom_point(aes(col=rate))+ scale_colour_brewer(palette = "Spectral")  
